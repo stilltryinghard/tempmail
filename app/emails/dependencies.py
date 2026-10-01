@@ -37,7 +37,7 @@ async def get_authorized_mailbox(
             detail="Mailbox not found",
         )
         
-    # 3. Ящик протух - 404 (или 410)
+    # 3. Ящик протух - 410
     if mailbox.expires_at < datetime.now(timezone.utc):
         raise HTTPException(
             status_code=status.HTTP_410_GONE,

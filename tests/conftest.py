@@ -1,4 +1,6 @@
 import pytest_asyncio
+import pytest
+from pydantic import SecretStr
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
@@ -6,6 +8,8 @@ from app.config import settings
 from app.database import Base, get_db
 from app.main import app
 from app.redis_client import redis_client
+
+TEST_BREVO_TOKEN = "test-brevo-token"
 
 
 TEST_DATABASE_URL = (
@@ -54,3 +58,11 @@ async def client(engine):
         yield ac
 
     app.dependency_overrides.clear()
+    
+@pytest.fixture(autouse=True)
+def brevo_token(monkeypatch):
+    monkeypatch.setattr(settings, "brevo_webhook_secret", SecretStr(TEST_BREVO_TOKEN))
+
+@pytest.fixture
+def brevo_headers():
+    return {"Authorization": f"Bearer {TEST_BREVO_TOKEN}"}

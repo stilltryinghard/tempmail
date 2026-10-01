@@ -116,7 +116,6 @@ uv run pytest --cov=app --cov-report=term --cov-report=html
 
 ## Что можно улучшить
 
-- Проверка подписи Brevo на webhook (сейчас эндпоинт без аутентификации)
 - Обработка коллизии адреса (retry при нарушении UNIQUE)
 - Учёт `X-Forwarded-For` для rate limit за обратным прокси
 - Санитизация HTML-тела письма (защита от XSS при отдаче)

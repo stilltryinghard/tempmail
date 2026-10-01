@@ -8,6 +8,7 @@ from app.emails.models import Mailbox
 from app.emails.dependencies import get_authorized_mailbox
 from app.messages.schemas import MessageListResponse, MessagePreview, MessageDetail
 from app.messages.webhook_schemas import BrevoWebhookPayload
+from app.messages.dependencies import verify_brevo_token
 
 router = APIRouter(prefix="/mailboxes/{mailbox_id}/messages", tags=["messages"])
 webhook_router = APIRouter(prefix="/webhooks", tags=["webhooks"])
@@ -41,11 +42,10 @@ async def read_message(
     
     return MessageDetail.model_validate(message)
 
-@webhook_router.post("/brevo/inbound")
+@webhook_router.post("/brevo/inbound", dependencies=[Depends(verify_brevo_token)])
 async def handle_inbound(
     payload: BrevoWebhookPayload,
     db: AsyncSession = Depends(get_db),
 ):
     await service.process_inbound(db, payload)
     return {"status": "ok"}
-    
