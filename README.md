@@ -1,6 +1,6 @@
 # tempmail
 
-![CI](https://github.com/somebodycalltheambulance/tempmail/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/stilltryinghard/tempmail/actions/workflows/ci.yml/badge.svg)
 
 Сервис временной почты: анонимные одноразовые ящики с ограниченным временем жизни. Без регистрации, доступ к письмам по токену, приём входящей почты через webhook.
 
