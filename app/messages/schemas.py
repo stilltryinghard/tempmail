@@ -1,7 +1,9 @@
 import uuid
+import nh3
+
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class MessagePreview(BaseModel):
@@ -21,6 +23,12 @@ class MessageDetail(BaseModel):
     subject: str | None
     body: str
     received_at: datetime
+    html_body: str | None
+
+    @field_validator("html_body")
+    @classmethod
+    def sanitize_body(cls, v: str | None) -> str | None:
+        return nh3.clean(v) if v else v
 
 
 class MessageListResponse(BaseModel):

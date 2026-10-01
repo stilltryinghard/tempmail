@@ -49,12 +49,14 @@ async def process_inbound(session: AsyncSession, payload: BrevoWebhookPayload) -
         if mailbox.expires_at < datetime.now(timezone.utc):
             continue
 
-        body = item.RawTextBody or item.RawHtmlBody or ""
+        body = item.RawTextBody or ""
+        html_body = item.RawHtmlBody
         message = Message(
             mailbox_id=mailbox.id,
             sender=item.From.Address,
             subject=item.Subject,
             body=body,
+            html_body=html_body,
         )
         session.add(message)
     await session.commit()

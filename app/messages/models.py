@@ -43,6 +43,11 @@ class Message(Base):
         default="",
     )
 
+    html_body: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
     received_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
