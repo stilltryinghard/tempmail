@@ -19,6 +19,7 @@ TEST_DATABASE_URL = (
     f"/tempmail_test"
 )
 
+
 @pytest_asyncio.fixture(autouse=True)
 async def clear_redis():
     await redis_client.flushdb()
@@ -45,7 +46,9 @@ async def setup_db(engine):
 
 @pytest_asyncio.fixture
 async def client(engine):
-    session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+    session_maker = async_sessionmaker(
+        engine, class_=AsyncSession, expire_on_commit=False
+    )
 
     async def override_get_db():
         async with session_maker() as session:
@@ -58,10 +61,12 @@ async def client(engine):
         yield ac
 
     app.dependency_overrides.clear()
-    
+
+
 @pytest.fixture(autouse=True)
 def brevo_token(monkeypatch):
     monkeypatch.setattr(settings, "brevo_webhook_secret", SecretStr(TEST_BREVO_TOKEN))
+
 
 @pytest.fixture
 def brevo_headers():

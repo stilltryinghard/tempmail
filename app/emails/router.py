@@ -13,7 +13,7 @@ router = APIRouter(prefix="/mailboxes", tags=["mailboxes"])
 
 
 @router.post(
-    "", # путь относительно prefix - POST /mailboxes
+    "",  # путь относительно prefix - POST /mailboxes
     response_model=MailboxResponse,
     status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(rate_limit_create)],
@@ -23,7 +23,7 @@ async def create_mailbox(
 ) -> MailboxResponse:
     # 1. Зову сервис - он создает ящик, возвращает (обьект, токен)
     mailbox, raw_token = await service.create_mailbox(db)
-    
+
     # 2. Собираю ответ ВРУЧНУЮ - токен подставляется из памяти
     return MailboxResponse(
         id=mailbox.id,
@@ -32,8 +32,8 @@ async def create_mailbox(
         expires_at=mailbox.expires_at,
         is_extended=mailbox.is_extended,
     )
-    
-    
+
+
 @router.post("/{mailbox_id}/extend", response_model=MailboxExtendResponse)
 async def renew_mailbox(
     db: AsyncSession = Depends(get_db),
@@ -42,7 +42,7 @@ async def renew_mailbox(
     try:
         mailbox = await service.extend_mailbox(db, mailbox)
     except ValueError:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-                            detail="Mailbox already extended!")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Mailbox already extended!"
+        )
     return MailboxExtendResponse.model_validate(mailbox)
-

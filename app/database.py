@@ -1,16 +1,14 @@
-from sqlalchemy.ext.asyncio import (
-    create_async_engine,
-    async_sessionmaker,
-    AsyncSession
-)
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import DeclarativeBase
 from collections.abc import AsyncGenerator
 
 from app.config import settings
 
-#Декларативная база - от нее наследуются все модели
+
+# Декларативная база - от нее наследуются все модели
 class Base(DeclarativeBase):
     pass
+
 
 # Собираем строку подключения из конфига
 DATABASE_URL = (
@@ -20,7 +18,7 @@ DATABASE_URL = (
     f"/{settings.postgres_db}"
 )
 
-#Engine - один на приложение, держит пул соединений
+# Engine - один на приложение, держит пул соединений
 engine = create_async_engine(
     DATABASE_URL,
     pool_size=5,
@@ -30,16 +28,16 @@ engine = create_async_engine(
     echo=settings.debug,
 )
 
-#Фабрика сессий
+# Фабрика сессий
 async_session_maker = async_sessionmaker(
     engine,
     class_=AsyncSession,
     expire_on_commit=False,
 )
 
-#Dependency для FastAPI - выдает сессию на запрос, потом закрывает
-#контекстный менеджер сам закроет сессию после запроса
+
+# Dependency для FastAPI - выдает сессию на запрос, потом закрывает
+# контекстный менеджер сам закроет сессию после запроса
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_maker() as session:
         yield session
-        

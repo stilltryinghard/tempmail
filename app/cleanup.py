@@ -14,11 +14,12 @@ from app.emails.models import Mailbox
 logger = logging.getLogger(__name__)
 
 CLEANUP_INTERVAL_SECONDS = 60
-        
-        
+
+
 async def delete_expired_mailboxes(session: AsyncSession) -> int:
-    result = await session.execute(delete(Mailbox)
-        .where(Mailbox.expires_at < datetime.now(timezone.utc)))
+    result = await session.execute(
+        delete(Mailbox).where(Mailbox.expires_at < datetime.now(timezone.utc))
+    )
     await session.commit()
     return result.rowcount
 
@@ -33,4 +34,3 @@ async def cleanup_loop() -> None:
         except Exception:
             logger.exception("Cleanup failed")
         await asyncio.sleep(CLEANUP_INTERVAL_SECONDS)
-    
